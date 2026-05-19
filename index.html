@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8">
+<title>GreenBoost</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  background: #ecf9f1;
+  text-align: center;
+}
+
+header {
+  background: linear-gradient(90deg, #2ecc71, #27ae60);
+  color: white;
+  padding: 25px;
+}
+
+h1 {
+  margin: 0;
+}
+
+#produkty {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.produkt {
+  background: white;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.produkt h3 {
+  margin: 10px 0;
+}
+
+input[type="number"] {
+  width: 60px;
+  padding: 5px;
+}
+
+#shrnutí {
+  background: white;
+  margin: 20px auto;
+  padding: 15px;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 5px 12px rgba(0,0,0,0.1);
+}
+
+.form input {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 220px;
+}
+
+button {
+  margin: 20px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1e8449;
+}
+</style>
+
+</head>
+
+<body>
+
+<header>
+  <h1>🥗 GreenBoost</h1>
+  <p>Fresh saláty & smoothies pro energii každý den ⚡</p>
+</header>
+
+<section id="produkty"></section>
+
+<h2>🛒 Objednávka</h2>
+
+<div id="shrnutí">
+  <p>Počet kusů: <b id="kusy">0</b></p>
+  <p>Celková cena: <b id="cena">0</b> Kč</p>
+</div>
+
+<div class="form">
+  <h3>Kontaktní údaje</h3>
+  <input type="text" id="jmeno" placeholder="Jméno">
+  <input type="text" id="prijmeni" placeholder="Příjmení">
+  <input type="email" id="email" placeholder="E-mail">
+  <input type="tel" id="telefon" placeholder="Telefon">
+</div>
+
+<button onclick="odeslat()">ODESLAT OBJEDNÁVKU</button>
+
+<script>
+// "CSV data" přímo v kódu
