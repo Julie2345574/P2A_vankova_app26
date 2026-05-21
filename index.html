@@ -11,23 +11,34 @@ body {
   background: #ecf9f1;
   text-align: center;
 }
+
 header {
   background: linear-gradient(90deg, #2ecc71, #27ae60);
   color: white;
   padding: 25px;
 }
+
+h1 { margin: 0; }
+
 #produkty {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
   padding: 20px;
 }
+
 .produkt {
   background: white;
   padding: 15px;
   border-radius: 15px;
   box-shadow: 0 5px 12px rgba(0,0,0,0.1);
 }
+
+input[type="number"] {
+  width: 60px;
+  padding: 5px;
+}
+
 #shrnutí {
   background: white;
   margin: 20px auto;
@@ -35,14 +46,37 @@ header {
   width: 250px;
   border-radius: 10px;
 }
+
+.form input {
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  width: 220px;
+}
+
+button {
+  margin: 20px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background: #27ae60;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #1e8449;
+}
 </style>
 
 </head>
+
 <body>
 
 <header>
   <h1>🥗 GreenBoost</h1>
-  <p>Fresh saláty & smoothies ⚡</p>
+  <p>Fresh saláty & smoothies pro energii ⚡</p>
 </header>
 
 <section id="produkty"></section>
@@ -54,24 +88,36 @@ header {
   <p>Celková cena: <b id="cena">0</b> Kč</p>
 </div>
 
-<script>
+<div class="form">
+  <h3>Kontaktní údaje</h3>
+  <input type="text" id="jmeno" placeholder="Jméno">
+  <input type="text" id="prijmeni" placeholder="Příjmení">
+  <input type="email" id="email" placeholder="E-mail">
+  <input type="tel" id="telefon" placeholder="Telefon">
+</div>
 
+<button onclick="odeslat()">ODESLAT OBJEDNÁVKU</button>
+
+<script>
 let produkty = [];
 
-// ✅ načtení CSV
+// načtení CSV
 fetch("produkty.csv")
-  .then(response => response.text())
+  .then(res => res.text())
   .then(data => {
     const radky = data.trim().split("\n");
-
-    radky.shift(); // odstraní hlavičku
+    radky.shift();
 
     const container = document.getElementById("produkty");
 
-    radky.forEach((radek, index) => {
+    radky.forEach((radek, i) => {
       const [nazev, cena] = radek.split(";");
 
-      produkty.push({ nazev, cena: parseInt(cena), kusy: 0 });
+      produkty.push({
+        nazev: nazev.trim(),
+        cena: parseInt(cena),
+        kusy: 0
+      });
 
       const div = document.createElement("div");
       div.className = "produkt";
@@ -79,30 +125,60 @@ fetch("produkty.csv")
       div.innerHTML = `
         <h3>${nazev}</h3>
         <p>${cena} Kč</p>
-        <input type="number" min="0" value="0" onchange="zmena(${index}, this.value)">
+        <input type="number" min="0" value="0" onchange="zmena(${i}, this.value)">
       `;
 
       container.appendChild(div);
     });
   });
 
-// ✅ přepočet ceny
-function zmena(index, hodnota) {
-  produkty[index].kusy = parseInt(hodnota) || 0;
+// přepočet
+function zmena(i, value) {
+  produkty[i].kusy = parseInt(value) || 0;
 
-  let celkemKusu = 0;
-  let celkovaCena = 0;
+  let ks = 0;
+  let cena = 0;
 
   produkty.forEach(p => {
-    celkemKusu += p.kusy;
-    celkovaCena += p.kusy * p.cena;
+    ks += p.kusy;
+    cena += p.kusy * p.cena;
   });
 
-  document.getElementById("kusy").innerText = celkemKusu;
-  document.getElementById("cena").innerText = celkovaCena;
+  document.getElementById("kusy").innerText = ks;
+  document.getElementById("cena").innerText = cena;
 }
 
+// odeslání objednávky
+function odeslat() {
+  const jmeno = document.getElementById("jmeno").value;
+  const prijmeni = document.getElementById("prijmeni").value;
+  const email = document.getElementById("email").value;
+  const telefon = document.getElementById("telefon").value;
+
+  if (!jmeno || !prijmeni || !email || !telefon) {
+    alert("Vyplň všechny údaje!");
+    return;
+  }
+
+  let text = "Objednávka:\n\n";
+
+  produkty.forEach(p => {
+    if (p.kusy > 0) {
+      text += `${p.nazev} - ${p.kusy} ks\n`;
+    }
+  });
+
+  text += `\nCelkem kusů: ${document.getElementById("kusy").innerText}`;
+  text += `\nCelková cena: ${document.getElementById("cena").innerText} Kč`;
+
+  text += `\n\nZákazník:\n${jmeno} ${prijmeni}\n${email}\n${telefon}`;
+
+  const mail = `mailto:app@kostka-skola.cz?subject=Objednávka&body=${encodeURIComponent(text)}`;
+
+  window.location.href = mail;
+}
 </script>
 
 </body>
 </html>
+``
